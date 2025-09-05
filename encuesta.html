@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Encuesta por Sexo y Edad</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f9f9f9;
+    }
+    table {
+      border-collapse: collapse;
+      width: 60%;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #ddd;
+    }
+    input[type="number"] {
+      width: 80px;
+      padding: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background: #218838;
+    }
+    #resultado {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <h2>Encuesta por Sexo y Edad</h2>
+  <form id="encuesta">
+    <table>
+      <tr>
+        <th>Edad</th>
+        <th>Varones</th>
+        <th>Mujeres</th>
+      </tr>
+      <tr>
+        <td>Menos de 18</td>
+        <td><input type="number" min="0" name="varones18"></td>
+        <td><input type="number" min="0" name="mujeres18"></td>
+      </tr>
+      <tr>
+        <td>18 – 24</td>
+        <td><input type="number" min="0" name="varones24"></td>
+        <td><input type="number" min="0" name="mujeres24"></td>
+      </tr>
+      <tr>
+        <td>25 – 34</td>
+        <td><input type="number" min="0" name="varones34"></td>
+        <td><input type="number" min="0" name="mujeres34"></td>
+      </tr>
+      <tr>
+        <td>35 – 44</td>
+        <td><input type="number" min="0" name="varones44"></td>
+        <td><input type="number" min="0" name="mujeres44"></td>
+      </tr>
+      <tr>
+        <td>45 – 54</td>
+        <td><input type="number" min="0" name="varones54"></td>
+        <td><input type="number" min="0" name="mujeres54"></td>
+      </tr>
+      <tr>
+        <td>55 – 64</td>
+        <td><input type="number" min="0" name="varones64"></td>
+        <td><input type="number" min="0" name="mujeres64"></td>
+      </tr>
+      <tr>
+        <td>65 o más</td>
+        <td><input type="number" min="0" name="varones65"></td>
+        <td><input type="number" min="0" name="mujeres65"></td>
+      </tr>
+    </table>
+    <button type="button" onclick="generarReporte()">Generar Reporte</button>
+  </form>
+
+  <div id="resultado"></div>
+
+  <script>
+    function generarReporte() {
+      const inputs = document.querySelectorAll("input[type='number']");
+      let totalVarones = 0, totalMujeres = 0;
+      let html = "<h3>Reporte</h3><ul>";
+      
+      inputs.forEach(input => {
+        const valor = parseInt(input.value) || 0;
+        if (input.name.includes("varones")) totalVarones += valor;
+        if (input.name.includes("mujeres")) totalMujeres += valor;
+      });
+
+      html += `<li>Total Varones: <b>${totalVarones}</b></li>`;
+      html += `<li>Total Mujeres: <b>${totalMujeres}</b></li>`;
+      html += `<li>Total General: <b>${totalVarones + totalMujeres}</b></li>`;
+      html += "</ul>";
+
+      document.getElementById("resultado").innerHTML = html;
+    }
+  </script>
+</body>
+</html>
