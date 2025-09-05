@@ -2,117 +2,145 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Encuesta por Sexo y Edad</title>
+  <title>Encuesta Célula Cristiana</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 40px;
-      background: #f9f9f9;
+      margin: 20px;
+      background: #f5f5f5;
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #b22222;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto;
+      height: 80px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+      max-width: 900px;
+      margin: auto;
+    }
+    label {
+      font-weight: bold;
     }
     table {
+      width: 100%;
       border-collapse: collapse;
-      width: 60%;
-      margin-bottom: 20px;
+      margin: 15px 0;
     }
     th, td {
       border: 1px solid #aaa;
-      padding: 8px;
+      padding: 6px;
       text-align: center;
     }
     th {
-      background: #ddd;
+      background: #eee;
     }
-    input[type="number"] {
-      width: 80px;
-      padding: 5px;
+    input[type="number"], input[type="text"] {
+      width: 90%;
+      padding: 4px;
     }
     button {
-      padding: 10px 20px;
-      background: #28a745;
-      color: white;
+      padding: 12px 20px;
+      margin: 15px 5px;
       border: none;
-      cursor: pointer;
+      background: #b22222;
+      color: white;
+      font-size: 16px;
       border-radius: 5px;
+      cursor: pointer;
     }
     button:hover {
-      background: #218838;
-    }
-    #resultado {
-      margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #ccc;
-      background: white;
+      background: #8b1a1a;
     }
   </style>
 </head>
 <body>
-  <h2>Encuesta por Sexo y Edad</h2>
-  <form id="encuesta">
-    <table>
-      <tr>
-        <th>Edad</th>
-        <th>Varones</th>
-        <th>Mujeres</th>
-      </tr>
-      <tr>
-        <td>Menos de 18</td>
-        <td><input type="number" min="0" name="varones18"></td>
-        <td><input type="number" min="0" name="mujeres18"></td>
-      </tr>
-      <tr>
-        <td>18 – 24</td>
-        <td><input type="number" min="0" name="varones24"></td>
-        <td><input type="number" min="0" name="mujeres24"></td>
-      </tr>
-      <tr>
-        <td>25 – 34</td>
-        <td><input type="number" min="0" name="varones34"></td>
-        <td><input type="number" min="0" name="mujeres34"></td>
-      </tr>
-      <tr>
-        <td>35 – 44</td>
-        <td><input type="number" min="0" name="varones44"></td>
-        <td><input type="number" min="0" name="mujeres44"></td>
-      </tr>
-      <tr>
-        <td>45 – 54</td>
-        <td><input type="number" min="0" name="varones54"></td>
-        <td><input type="number" min="0" name="mujeres54"></td>
-      </tr>
-      <tr>
-        <td>55 – 64</td>
-        <td><input type="number" min="0" name="varones64"></td>
-        <td><input type="number" min="0" name="mujeres64"></td>
-      </tr>
-      <tr>
-        <td>65 o más</td>
-        <td><input type="number" min="0" name="varones65"></td>
-        <td><input type="number" min="0" name="mujeres65"></td>
-      </tr>
-    </table>
-    <button type="button" onclick="generarReporte()">Generar Reporte</button>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_the_Foursquare_Church.svg/512px-Logo_of_the_Foursquare_Church.svg.png" alt="Logo Cuadrangular" class="logo">
+  <h1>Encuesta de Célula Cristiana</h1>
+
+  <form id="encuestaForm">
+    <label>Nombre de la Célula:</label><br>
+    <input type="text" id="celula" required><br><br>
+
+    <label>Sector de la Célula:</label><br>
+    <input type="text" id="sector" required><br><br>
+
+    <div id="secciones"></div>
+
+    <button type="button" onclick="generarCSV()">Generar Reporte CSV</button>
   </form>
 
-  <div id="resultado"></div>
-
   <script>
-    function generarReporte() {
-      const inputs = document.querySelectorAll("input[type='number']");
-      let totalVarones = 0, totalMujeres = 0;
-      let html = "<h3>Reporte</h3><ul>";
+    const categorias = [
+      "Asistencia por Sexo y Edad",
+      "Convertidos",
+      "Reconciliados",
+      "Sanaciones",
+      "Don de Lenguas"
+    ];
+
+    const edades = ["0-11", "12-18", "19-59", "+60"];
+    const sexos = ["Varones", "Mujeres"];
+
+    function crearTabla(categoria) {
+      let html = `<h2>${categoria}</h2><table><tr><th>Rango de Edad</th>`;
+      sexos.forEach(sexo => html += `<th>${sexo}</th>`);
+      html += "</tr>";
+
+      edades.forEach(edad => {
+        html += `<tr><td>${edad}</td>`;
+        sexos.forEach(sexo => {
+          const id = `${categoria}_${edad}_${sexo}`.replace(/\s+/g,"_");
+          html += `<td><input type="number" min="0" id="${id}" value="0"></td>`;
+        });
+        html += "</tr>";
+      });
+      html += "</table>";
+      return html;
+    }
+
+    document.getElementById("secciones").innerHTML = categorias.map(c => crearTabla(c)).join("");
+
+    function generarCSV() {
+      let celula = document.getElementById("celula").value.trim().replace(/\s+/g,"_");
+      let sector = document.getElementById("sector").value;
       
-      inputs.forEach(input => {
-        const valor = parseInt(input.value) || 0;
-        if (input.name.includes("varones")) totalVarones += valor;
-        if (input.name.includes("mujeres")) totalMujeres += valor;
+      // Fecha en formato YYYY-MM-DD
+      let hoy = new Date();
+      let fecha = hoy.toISOString().split("T")[0];
+
+      let csv = `Nombre Célula,${celula}\nSector,${sector}\nFecha,${fecha}\n\n`;
+
+      categorias.forEach(cat => {
+        csv += `${cat}\nRango de Edad,Varones,Mujeres\n`;
+        edades.forEach(edad => {
+          let fila = [edad];
+          sexos.forEach(sexo => {
+            const id = `${cat}_${edad}_${sexo}`.replace(/\s+/g,"_");
+            fila.push(document.getElementById(id).value || "0");
+          });
+          csv += fila.join(",") + "\n";
+        });
+        csv += "\n";
       });
 
-      html += `<li>Total Varones: <b>${totalVarones}</b></li>`;
-      html += `<li>Total Mujeres: <b>${totalMujeres}</b></li>`;
-      html += `<li>Total General: <b>${totalVarones + totalMujeres}</b></li>`;
-      html += "</ul>";
+      // Nombre del archivo: Celula_Fecha.csv
+      const nombreArchivo = `${celula || "Celula"}_${fecha}.csv`;
 
-      document.getElementById("resultado").innerHTML = html;
+      // Descargar archivo
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = nombreArchivo;
+      link.click();
     }
   </script>
 </body>
